@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { Tokens } from './types';
 import { Request } from 'express';
+import { AtGuard, RtGuard } from './guards';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +27,7 @@ export class AuthController {
         We use JwtPayload type as a strongly typed payload in the auth.service file
     */
 
-    @UseGuards(AuthGuard('jwt')) // Passport jwt strategy guard
+    @UseGuards(AtGuard) // Passport jwt strategy guard
     @Post('logout')
     @HttpCode(HttpStatus.OK)
     logout(@Req() req: Request) {
@@ -34,7 +35,7 @@ export class AuthController {
         return this.authService.logout(user['sub']);
     }
 
-    @UseGuards(AuthGuard('jwt-refresh')) // Passport jwt-refresh strategy guard
+    @UseGuards(RtGuard) // Passport jwt-refresh strategy guard
     @Post('refresh')
     @HttpCode(HttpStatus.OK)
     refreshTokens(@Req() req: Request) {
