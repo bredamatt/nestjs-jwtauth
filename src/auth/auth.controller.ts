@@ -5,6 +5,8 @@ import { AuthDto } from './dto';
 import { Tokens } from './types';
 import { Request } from 'express';
 import { AtGuard, RtGuard } from './guards';
+import { GetCurrentUser } from './decorators';
+import { GetCurrentUserId } from './decorators/get-current-user-id.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -27,19 +29,19 @@ export class AuthController {
         We use JwtPayload type as a strongly typed payload in the auth.service file
     */
 
-    @UseGuards(AtGuard) // Passport jwt strategy guard
+    @UseGuards(AtGuard) // Passport jwt strategy guard, see ./guards/atguard.guard.ts
     @Post('logout')
     @HttpCode(HttpStatus.OK)
-    logout(@Req() req: Request) {
-        const user = req.user;
-        return this.authService.logout(user['sub']);
+    logout(@GetCurrentUser('sub') userId: number) {
+        return this.authService.logout(userId);
     }
 
-    @UseGuards(RtGuard) // Passport jwt-refresh strategy guard
+    @UseGuards(RtGuard) // Passport jwt-refresh strategy guard see ./guards/rtguard.guard.ts
     @Post('refresh')
     @HttpCode(HttpStatus.OK)
-    refreshTokens(@Req() req: Request) {
-        const user = req.user;
-        return this.authService.refreshTokens(user['sub'], user['refreshToken']);
+    refreshTokens(
+        @GetCurrentUserId() userId: number,
+        @GetCurrentUser('refreshToken') refreshToken: string) {
+        return this.authService.refreshTokens(userId, refreshToken);
     }
 }
