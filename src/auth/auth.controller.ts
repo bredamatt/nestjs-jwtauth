@@ -1,23 +1,23 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { Tokens } from './types';
-import { Request } from 'express';
 import { AtGuard, RtGuard } from './guards';
-import { GetCurrentUser } from './decorators';
+import { GetCurrentUser, Public } from './decorators';
 import { GetCurrentUserId } from './decorators/get-current-user-id.decorator';
 
 @Controller('auth')
 export class AuthController {
     constructor( private authService: AuthService) {}
 
+    @Public()
     @Post('local/signup')
     @HttpCode(HttpStatus.CREATED)
     signupLocal(@Body() dto: AuthDto): Promise<Tokens> {
         return this.authService.signupLocal(dto);
     }
 
+    @Public()
     @Post('local/signin')
     @HttpCode(HttpStatus.OK)
     signinLocal(@Body() dto: AuthDto): Promise<Tokens> {
@@ -36,6 +36,7 @@ export class AuthController {
         return this.authService.logout(userId);
     }
 
+    @Public() // Bypass global AtGuard
     @UseGuards(RtGuard) // Passport jwt-refresh strategy guard see ./guards/rtguard.guard.ts
     @Post('refresh')
     @HttpCode(HttpStatus.OK)
