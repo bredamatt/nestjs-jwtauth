@@ -10,7 +10,7 @@ export class AuthService {
         // const newUser = this.prisma.user.create({
         //     data: {
         //         email: dto.email,
-        //         password: dto.password
+        //         password: dto.password   <--- needs to be encrypted
         //     }
         // })
     }
