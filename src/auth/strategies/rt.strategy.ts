@@ -14,8 +14,12 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
         });
     }
 
-    // Uses express under the hood
+    // Uses express Request under the hood:+ https://www.javatpoint.com/expressjs-request
     validate(req: Request, payload: any) {
-        return payload;
+        const refreshToken = req.get('authorization').replace('Bearer', '').trim();
+        return {
+            ...payload,
+            refreshToken,
+        };
     }
 }
