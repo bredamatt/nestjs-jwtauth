@@ -2,6 +2,11 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt"
 import { Injectable } from "@nestjs/common";
 
+type JwtPayload = {
+    sub: string;
+    email: string;
+}
+
 @Injectable()
 export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
     constructor() {
@@ -12,10 +17,7 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
         });
     }
 
-
-    // Uses express under the hood
-    validate(payload: any) {
+    validate(payload: JwtPayload) {
         return payload;
-        // req.user = payload;
     }
 }
